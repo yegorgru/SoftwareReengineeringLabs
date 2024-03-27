@@ -12,17 +12,30 @@ definition of GameController class
 #include "NetworkManager.h"
 #include "EnumCode.h"
 #include "Controller.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
 	/**
 	\brief controller class responsible for game
 
-	Singleton<GameController>, Controller inheritant
+	Controller inheritant
 	*/
-	class GameController:public Controller, public Singleton<GameController>
+	class GameController : public Controller
 	{
+	public:
+		/**
+		\brief GameController constructor
+
+		call Restore method,
+		initiaize attriutes with their Get() methods
+		*/
+		explicit GameController();
+		GameController(const GameController&) = delete;
+		GameController(GameController&&) = default;
+		GameController& operator=(const GameController&) = delete;
+		GameController& operator=(GameController&&) = default;
+
+
 	public:
 		/**
 		\brief run GameController method
@@ -36,23 +49,14 @@ namespace Docking::Client {
 		\brief restores game information
 		*/
 		void Restore();
+
 	private:
-		/**
-		\brief GameController constructor
-
-		call Restore method,
-		initiaize attriutes with their Get() methods 
-		*/
-		GameController();
-
-		GameModel& m_Model;					///<logic model of game
-		GameRender& m_Render;				///<responsible for draw of window
+		GameModel m_Model;					///<logic model of game
+		GameRender m_Render;				///<responsible for draw of window
 
 		NetworkManager& m_NetworkManager;	///<responsible for communication with Server side
 
 		bool m_IsEnd;						///<end of game or no
 		bool m_MyTurn;						///<our player's turn or no
-
-		friend class Singleton<GameController>;
 	};
 }

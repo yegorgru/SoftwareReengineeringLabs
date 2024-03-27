@@ -6,9 +6,6 @@
 
 #ifdef DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
-#include <random>
-std::random_device rd;
-std::mt19937 mersenne(rd());
 
 TEST_CASE("testing players storage") {
     using namespace Docking::Server;
@@ -138,10 +135,10 @@ TEST_CASE("testing game") {
 
 int main()
 {
-    Docking::Server::Server::Create();
+    Docking::Server::Server server;
 #ifdef DOCTEST_CONFIG_IMPLEMENT
     doctest::Context context;
     int res = context.run();
 #endif
-    Docking::Server::Server::Get().Run();
+    server.Run();
 }

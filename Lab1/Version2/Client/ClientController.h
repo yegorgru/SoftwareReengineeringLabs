@@ -7,12 +7,8 @@ definition of ClientController clas
 
 #pragma once
 
-#include "GameRender.h"
-#include "GameModel.h"
-#include "GameController.h"
-#include "MenuController.h"
+#include <SFML/Graphics.hpp>
 #include "Player.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
@@ -20,28 +16,29 @@ namespace Docking::Client {
 	\brief main controller class on client side
 
 	launch other controllers
-	Singleton<ClientController> inheritant
 	*/
-	class ClientController : public Singleton<ClientController>
+	class ClientController
 	{		
 	public:
+		/**
+		\brief ClientController constructor
+
+		\param window reference to window of application
+		*/
+		ClientController() = default;
+		ClientController(const ClientController&) = delete;
+		ClientController(ClientController&&) = default;
+		ClientController& operator=(const ClientController&) = delete;
+		ClientController& operator=(ClientController&&) = default;
+
 		/**
 		\brief run application method
 
 		launch Run() methods of other controllers
 		*/
 		void Run();
+
 	private:
-		/**
-		\brief ClientController constructor
-
-		\param window reference to window of application
-		*/
-		ClientController(sf::RenderWindow& window);
-
 		Player m_Player;			///<information about player who launch application
-		sf::RenderWindow& m_Window;	///<window of application
-
-		friend class Singleton<ClientController>;
 	};
 }

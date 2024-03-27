@@ -8,23 +8,31 @@ implementation of GameModel class
 #include "GameModel.h"
 
 namespace Docking::Client {
+	namespace {
+		const int FirstPlayerElement = 1;
+		const int SecondPlayerElement = 2;
+		const int EmptyElement = 0;
+	}
+
 	GameModel::GameModel():
 		m_Map(),
-		m_Winner(0) {}
+		m_Winner(0) 
+	{
+	}
 
 	void GameModel::Restore()
 	{
-		for (size_t i = 0; i < 8; i++) {
-			for (size_t j = 0; j < 8; j++)
+		for (size_t i = 0; i < m_Map.size(); i++) {
+			for (size_t j = 0; j < m_Map.size(); j++)
 			{
-				if ((i == 0 || i == 7) && j > 1 && j < 6) {
-					m_Map[i][j] = 1;
+				if ((i == 0 || i == m_Map.size() - 1) && j > 1 && j < m_Map.size() - 2) {
+					m_Map[i][j] = FirstPlayerElement;
 				}
-				else if ((j == 0 || j == 7) && i > 1 && i < 6) {
-					m_Map[i][j] = 2;
+				else if ((j == 0 || j == m_Map.size() - 1) && i > 1 && i < m_Map.size() - 2) {
+					m_Map[i][j] = SecondPlayerElement;
 				}
 				else {
-					m_Map[i][j] = 0;
+					m_Map[i][j] = EmptyElement;
 				}
 			}
 		}
@@ -33,7 +41,7 @@ namespace Docking::Client {
 
 	void GameModel::SetElement(int element, Position newPos, Position oldPos) {
 		if (!(oldPos == Position{-1, -1})) {
-			m_Map[oldPos.x][oldPos.y] = 0;
+			m_Map[oldPos.x][oldPos.y] = EmptyElement;
 		}
 		m_Map[newPos.x][newPos.y] = element;
 	}
@@ -54,7 +62,7 @@ namespace Docking::Client {
 		m_Players.push_back(player);
 	}
 
-	std::vector<Player>& GameModel::GetPlayers()
+	GameModel::Players& GameModel::GetPlayers()
 	{
 		return m_Players;
 	}

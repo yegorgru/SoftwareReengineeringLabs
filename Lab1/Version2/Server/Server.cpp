@@ -7,23 +7,14 @@ implementation of Server class
 
 #include "Server.h"
 
-#include <fstream>
-
 namespace Docking::Server {
 
     Server::Server():
-        m_NetworkManager(*NetworkManager<int>::Create(m_Selector)),
+        m_NetworkManager(*NetworkManager<int>::Create()),
         m_NextIdPlayer(0),
         m_UncompletedGame(0){
 
         m_IsRunning = false;
-
-        std::ifstream fin("config.txt");
-        fin >> m_Port;
-        fin.close();
-
-        m_Listener.listen(m_Port);
-        m_Selector.add(m_Listener);
 
         m_Games.emplace(0,Game());
     }
@@ -32,21 +23,19 @@ namespace Docking::Server {
         m_IsRunning = true;
 
         while (m_IsRunning) {
-            if (!m_Selector.wait())
+            if (!m_NetworkManager.Wait()) {
                 continue;
+            }
 
-            if (m_Selector.isReady(m_Listener)) {
-                m_Sockets.emplace_back();
-                if (m_Listener.accept(m_Sockets.back()) == sf::Socket::Done) {
-                    m_NetworkManager.ConnectPlayer(m_NextIdPlayer, m_Sockets.back());
-                    m_Players.insert({ m_NextIdPlayer, Player(m_NextIdPlayer, m_Sockets.back()) });
+            if (m_NetworkManager.IsSelectorReady()) {
+                if (m_NetworkManager.AcceptNewSocket(m_NextIdPlayer)) {
+                    m_Players.insert({ m_NextIdPlayer, Player(m_NextIdPlayer, m_NetworkManager.GetLastSocket()) });
                     m_NextIdPlayer++;
-                    m_Selector.add(m_Sockets.back());
                 }
             }
             else
             {
-                for (auto player = m_Players.begin(); player!=m_Players.end();)
+                for (auto player = m_Players.begin(); player != m_Players.end();)
                 {
                     if (m_NetworkManager.IsReady(player->second.GetId()))
                     {

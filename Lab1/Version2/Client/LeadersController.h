@@ -11,17 +11,28 @@ definition of LeadersController class
 #include "NetworkManager.h"
 #include "EnumCode.h"
 #include "Controller.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
 	/**
 	\brief controller class responsible for leaders board
 
-	Singleton<LeadersController>, Controller inheritant
+	Controller inheritant
 	*/
-	class LeadersController:public Controller, public Singleton<LeadersController>
+	class LeadersController : public Controller
 	{
+	public:
+		/**
+		\brief LeadersController constructor
+
+		initiaize attriutes with their Get() methods
+		*/
+		LeadersController();
+		LeadersController(const LeadersController&) = delete;
+		LeadersController(LeadersController&&) = default;
+		LeadersController& operator=(const LeadersController&) = delete;
+		LeadersController& operator=(LeadersController&&) = default;
+
 	public:
 		/**
 		\brief run LeadersController method
@@ -30,17 +41,11 @@ namespace Docking::Client {
 		\return Code of controller to launch next or Code::Exit
 		*/
 		Code Run() override;
+
+		void SetPlayer(const Player& player);
+
 	private:
-		/**
-		\brief LeadersController constructor
-
-		initiaize attriutes with their Get() methods
-		*/
-		LeadersController();
-
-		LeadersRender& m_Render;			///<responsible for draw of window
+		LeadersRender m_Render;				///<responsible for draw of window
 		NetworkManager& m_NetworkManager;	///<responsible for communication with Server side
-
-		friend class Singleton<LeadersController>;
 	};
 }

@@ -13,7 +13,6 @@ definition of LeadersRender clas
 
 #include "Player.h"
 #include "Render.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
@@ -22,17 +21,19 @@ namespace Docking::Client {
 
 	Singleton<LeadersRender>, Render inheritant
 	*/
-	class LeadersRender : public Render, public Singleton<LeadersRender>
+	class LeadersRender : public Render
 	{
 	public:
 		/**
-		\brief m_Window getter
-
-		override Render method
-		\return m_Window, application window
+		\brief LeadersRender constructor
 		*/
-		sf::RenderWindow& Window() override;
+		LeadersRender();
+		LeadersRender(const LeadersRender&) = delete;
+		LeadersRender(LeadersRender&&) = default;
+		LeadersRender& operator=(const LeadersRender&) = delete;
+		LeadersRender& operator=(LeadersRender&&) = default;
 
+	public:
 		/**
 		\brief draw elements on m_Window
 
@@ -85,16 +86,8 @@ namespace Docking::Client {
 		\param player reference to add
 		*/
 		void AddLeader(const Player& player);
+
 	private:
-
-		/**
-		\brief LeadersRender constructor
-
-		\param window reference to window of application
-		*/
-		LeadersRender(sf::RenderWindow& window);
-
-		sf::RenderWindow& m_Window;			///<reference to window of application
 		sf::RectangleShape m_RectangleName;	///<rectangle of input name
 		sf::RectangleShape m_RectangleFind;	///<rectangle of find button
 
@@ -105,8 +98,6 @@ namespace Docking::Client {
 		sf::Text m_TextLeaders;				///<text of leaders board
 
 		Player m_Player;					///<current player
-
-		friend class Singleton<LeadersRender>;
 	};
 }
 

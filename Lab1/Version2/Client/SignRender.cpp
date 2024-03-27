@@ -9,8 +9,7 @@ implementation of SignRender class
 #include "Assets.h"
 
 namespace Docking::Client {
-	SignRender::SignRender(sf::RenderWindow& window) :
-		m_Window(window),
+	SignRender::SignRender() :
 		m_RectangleName(sf::Vector2f(400, 70)),
 		m_RectanglePassword(sf::Vector2f(400, 70)),
 		m_RectangleSign(sf::Vector2f(190, 50))
@@ -43,29 +42,27 @@ namespace Docking::Client {
 		SetFocus(0);
 	}
 
-	sf::RenderWindow& SignRender::Window() {
-		return m_Window;
-	}
-
 	void SignRender::Draw() {
-		m_Window.clear(sf::Color(223, 236, 157));
+		auto& window = Render::GetWindow();
 
-		m_Window.draw(m_RectangleName);
-		m_Window.draw(m_RectanglePassword);
+		window.clear(sf::Color(223, 236, 157));
+
+		window.draw(m_RectangleName);
+		window.draw(m_RectanglePassword);
 
 		m_RectangleSign.setPosition(20, 480);
-		m_Window.draw(m_RectangleSign);
+		window.draw(m_RectangleSign);
 		m_RectangleSign.setPosition(230, 480);
-		m_Window.draw(m_RectangleSign);
+		window.draw(m_RectangleSign);
 
-		m_Window.draw(m_TextName);
-		m_Window.draw(m_TextPassword);
-		m_Window.draw(m_TextSignIn);
-		m_Window.draw(m_TextSignUp);
-		m_Window.draw(m_TextNameTitle);
-		m_Window.draw(m_TextPasswordTitle);
+		window.draw(m_TextName);
+		window.draw(m_TextPassword);
+		window.draw(m_TextSignIn);
+		window.draw(m_TextSignUp);
+		window.draw(m_TextNameTitle);
+		window.draw(m_TextPasswordTitle);
 
-		m_Window.display();
+		window.display();
 	}
 
 	void SignRender::SetFocus(bool focus) {

@@ -7,22 +7,17 @@ definition of GameModel class
 
 #pragma once
 
-#include <set>
-#include <utility>
 #include <array>
 #include <vector>
 
 #include "Player.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
 	/**
 	\brief class responsible for logic of game
-
-	Singleton<GameModel> inheritant
 	*/
-	class GameModel : public Singleton<GameModel>
+	class GameModel
 	{
 	public:
 		/**
@@ -34,7 +29,21 @@ namespace Docking::Client {
 			int x;
 			int y;
 		};
+		using Players = std::vector<Player>;
 
+	public:
+		/**
+		\brief GameModel constructor
+
+		sets 0 to m_Winner
+		*/
+		GameModel();
+		GameModel(const GameModel&) = delete;
+		GameModel(GameModel&&) = default;
+		GameModel& operator=(const GameModel&) = delete;
+		GameModel& operator=(GameModel&&) = default;
+
+	public:
 		/**
 		\brief run Restores information about game
 
@@ -85,20 +94,14 @@ namespace Docking::Client {
 
 		\return reference to m_Players
 		*/
-		std::vector<Player>& GetPlayers();
+		Players& GetPlayers();
+	
 	private:
-		/**
-		\brief GameModel constructor
-
-		sets 0 to m_Winner
-		*/
-		GameModel();
-
-		std::array<std::array<int, 8>, 8> m_Map;	///<logic map of game
-		int m_Winner;								///<winner og game (0 - nobody, 1 or 2)
-		std::vector<Player>m_Players;				///<players added to game. In correct game m_Players.size() == 2
-
-		friend class Singleton<GameModel>;
+		using GameMap = std::array<std::array<int, 8>, 8>;
+	private:
+		GameMap m_Map;			///<logic map of game
+		int m_Winner;			///<winner og game (0 - nobody, 1 or 2)
+		Players m_Players;		///<players added to game. In correct game m_Players.size() == 2
 	};
 
 	/**

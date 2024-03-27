@@ -12,25 +12,29 @@ definition of GameRender clas
 
 #include "GameModel.h"
 #include "Render.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
 	/**
 	\brief render class responsible for game
 
-	Singleton<GameRender>, Render inheritant
+	Render inheritant
 	*/
-	class GameRender:public Render, public Singleton<GameRender>
+	class GameRender : public Render
 	{
 	public:
 		/**
-		\brief m_Window getter
+		\brief GameRender constructor
 
-		override Render method
-		\return m_Window, application window
+		call Restore method
 		*/
-		sf::RenderWindow& Window() override;
+		GameRender(GameModel& model);
+		GameRender(const GameRender&) = delete;
+		GameRender(GameRender&&) = default;
+		GameRender& operator=(const GameRender&) = delete;
+		GameRender& operator=(GameRender&&) = default;
+
+	public:
 
 		/**
 		\brief draw elements on m_Window
@@ -58,18 +62,9 @@ namespace Docking::Client {
 		\brief restores all attributes for waiting variant
 		*/
 		void Restore();
+
 	private:
-		/**
-		\brief GameRender constructor
-		 
-		call Restore method
-		\param window reference to window of application
-		*/
-		GameRender(sf::RenderWindow& window);
-
 		GameModel& m_GameModel;			///<logic model of game
-
-		sf::RenderWindow& m_Window;		///<reference to window of application
 
 		sf::RectangleShape m_Square;	///<square responsible for player's blocks
 
@@ -78,7 +73,5 @@ namespace Docking::Client {
 		sf::Text m_TextEnd;				///<text in the end of game, when somebody wins
 		sf::Text m_TextWaiting;			///<text in the beginning of game, when player is waiting for opponent
 		int m_ElementSize;				///<size of m_Square
-
-		friend class Singleton<GameRender>;
 	};
 }

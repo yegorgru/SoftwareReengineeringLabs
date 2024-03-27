@@ -7,7 +7,6 @@ definition of PlayersStorage class
 
 #pragma once
 
-#include <map>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -33,6 +32,10 @@ namespace Docking::Server {
         reads data from file with information about players
         */
         PlayersStorage();
+        PlayersStorage(const PlayersStorage&) = delete;
+        PlayersStorage(PlayersStorage&&) = default;
+        PlayersStorage& operator=(const PlayersStorage&) = delete;
+        PlayersStorage& operator=(PlayersStorage&&) = default;
 
         /**
         \brief Player's wins getter
@@ -90,9 +93,15 @@ namespace Docking::Server {
         */
         void BackUp();
 
-        std::unordered_map<std::string, std::string> m_PlayersPasswords;	///<connection between names and passwords
-        std::unordered_map<std::string, int>m_PlayersWins;                  ///<connection between names and wins
-        std::multimap<int, std::string>m_WinsPlayers;                       ///<connection between wins and names
-        std::set<std::string>m_OnlinePlayers;                               ///<online players storage
+    private:
+        using Passwords = std::unordered_map<std::string, std::string>;
+        using Wins = std::unordered_map<std::string, int>;
+        using WinsPlayers = std::multimap<int, std::string>;
+        using OnlinePlayersStorage = std::set<std::string>;
+    private:
+        Passwords m_PlayersPasswords;	        ///<connection between names and passwords
+        Wins m_PlayersWins;                     ///<connection between names and wins
+        WinsPlayers m_WinsPlayers;              ///<connection between wins and names
+        OnlinePlayersStorage m_OnlinePlayers;   ///<online players storage
     };
 }

@@ -22,6 +22,6 @@ namespace Docking::Client {
 		/**
 		\brief pure virtual method, getter of window
 		*/
-		virtual sf::RenderWindow& Window()=0;
+		static sf::RenderWindow& GetWindow();
 	};
 }

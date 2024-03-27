@@ -12,17 +12,28 @@ definition of SignController class
 #include "NetworkManager.h"
 #include "Player.h"
 #include "Controller.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
 	/**
 	\brief controller class responsible for sign in/sign up
 
-	Singleton<SignController>, Controller inheritant
+	Controller inheritant
 	*/
-	class SignController:public Controller, public Singleton<SignController>
+	class SignController : public Controller
 	{
+	public:
+		/**
+		\brief SignController constructor
+
+		initiaize attriutes with their Get() methods
+		*/
+		SignController();
+		SignController(const SignController&) = delete;
+		SignController(SignController&&) = default;
+		SignController& operator=(const SignController&) = delete;
+		SignController& operator=(SignController&&) = default;
+
 	public:
 		/**
 		\brief run SignController method
@@ -39,18 +50,9 @@ namespace Docking::Client {
 		\return Code of controller to launch next or Code::Exit
 		*/
 		Code Run(Player& player);
+
 	private:
-
-		/**
-		\brief SignController constructor
-
-		initiaize attriutes with their Get() methods
-		*/
-		SignController();
-		SignRender& m_Render;				///<responsible for draw of window
+		SignRender m_Render;				///<responsible for draw of window
 		NetworkManager& m_NetworkManager;	///<responsible for communication with Server side
-
-		friend class Singleton<SignController>;
 	};
 }
-

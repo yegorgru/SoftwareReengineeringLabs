@@ -23,7 +23,6 @@ namespace Docking::Client {
 		wins will be 0, name will be empty
 		*/
 		Player();
-
 		/**
 		\brief Player constructor
 
@@ -31,7 +30,12 @@ namespace Docking::Client {
 		\param wins number, m_Wins will be equal to it
 		*/
 		Player(const std::string& name, int wins);
+		Player(const Player&) = default;
+		Player(Player&&) = default;
+		Player& operator=(const Player&) = default;
+		Player& operator=(Player&&) = default;
 
+	public:
 		/**
 		\brief m_Name getter
 
@@ -59,6 +63,7 @@ namespace Docking::Client {
 		\return string equal to m_Wins
 		*/
 		int GetWins() const;
+
 	private:
 		std::string m_Name;	///<name of player
 		int m_Wins;			///<wins of player

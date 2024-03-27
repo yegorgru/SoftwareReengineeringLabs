@@ -12,7 +12,6 @@ definition of SignRender clas
 #include <string>
 
 #include "Render.h"
-#include "Singleton.h"
 
 namespace Docking::Client {
 
@@ -21,17 +20,19 @@ namespace Docking::Client {
 
 	Singleton<SignRender>, Render inheritant
 	*/
-	class SignRender : public Render, public Singleton<SignRender>
+	class SignRender : public Render
 	{
 	public:
-
 		/**
-		\brief m_Window getter
-
-		override Render method
-		\return m_Window, application window
+		\brief SignRender constructor
 		*/
-		sf::RenderWindow& Window() override;
+		SignRender();
+		SignRender(const SignRender&) = delete;
+		SignRender(SignRender&&) = default;
+		SignRender& operator=(const SignRender&) = delete;
+		SignRender& operator=(SignRender&&) = default;
+
+	public:
 
 		/**
 		\brief draw elements on m_Window
@@ -80,15 +81,8 @@ namespace Docking::Client {
 		clears m_TextName and draw borders of m_RectangleName in red
 		*/
 		void IncorrectSign();
+
 	private:
-
-		/**
-		\brief SignRender constructor
-
-		\param window reference to window of application
-		*/
-		SignRender(sf::RenderWindow& window);
-		sf::RenderWindow& m_Window;				///<reference to window of application
 		sf::RectangleShape m_RectangleName;		///<rectangle of name input
 		sf::RectangleShape m_RectanglePassword;	///<rectangle of password input
 		sf::RectangleShape m_RectangleSign;		///<rectangle of sign in/up buttons
@@ -103,8 +97,6 @@ namespace Docking::Client {
 		bool m_Focus;							///<focus input (name/password)
 
 		std::string m_Password;					///<entered password
-
-		friend class Singleton<SignRender>;
 	};
 }
 

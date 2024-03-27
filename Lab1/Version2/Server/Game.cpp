@@ -8,22 +8,28 @@ implementation of Game class
 #include "Game.h"
 
 namespace Docking::Server {
+	namespace {
+		const int FirstPlayerElement = 1;
+		const int SecondPlayerElement = 2;
+		const int EmptyElement = 0;
+	}
+	
     Game::Game() :
         m_NetworkManager(NetworkManager<int>::Get()),
         m_CurrentPlayer(0),
 		m_Position{-1,-1},
 		m_Winner(0){
-        for (size_t i = 0; i < 8; i++) {
-            for (size_t j = 0; j < 8; j++)
+        for (size_t i = 0; i < m_Map.size(); i++) {
+            for (size_t j = 0; j < m_Map.size(); j++)
             {
-                if ((i == 0 || i == 7) && j > 1 && j < 6) {
-                    m_Map[i][j] = 1;
+                if ((i == 0 || i == m_Map.size() - 1) && j > 1 && j < m_Map.size() - 2) {
+                    m_Map[i][j] = FirstPlayerElement;
                 }
-                else if ((j == 0 || j == 7) && i > 1 && i < 6) {
-                    m_Map[i][j] = 2;
+                else if ((j == 0 || j == m_Map.size() - 1) && i > 1 && i < m_Map.size() - 2) {
+                    m_Map[i][j] = SecondPlayerElement;
                 }
                 else {
-                    m_Map[i][j] = 0;
+                    m_Map[i][j] = EmptyElement;
                 }
             }
         }
@@ -31,12 +37,12 @@ namespace Docking::Server {
 
     void Game::ConnectPlayer(Player& player) {
 		if (m_Players.size() == 0) {
-			m_ElementId[1] = player.GetId();
-			m_IdElement[player.GetId()] = 1;
+			m_ElementId[FirstPlayerElement] = player.GetId();
+			m_IdElement[player.GetId()] = FirstPlayerElement;
 		}
 		else {
-			m_ElementId[2] = player.GetId();
-			m_IdElement[player.GetId()] = 2;
+			m_ElementId[SecondPlayerElement] = player.GetId();
+			m_IdElement[player.GetId()] = SecondPlayerElement;
 		}
 		m_Players.push_back(&player);
     }
@@ -59,27 +65,11 @@ namespace Docking::Server {
 		}
 
 		else if (m_IdElement.at(playerId) != m_CurrentPlayer) return;
-		switch (clientCode) {
-		case ClientCode::Position: {
+		if (clientCode == ClientCode::Position) {
 			received >> m_Position.x >> m_Position.y;
-			break;
 		}
-		case ClientCode::Left: {
-			MakeMove(0);
-			break;
-		}
-		case ClientCode::Right: {
-			MakeMove(1);
-			break;
-		}
-		case ClientCode::Up: {
-			MakeMove(2);
-			break;
-		}
-		case ClientCode::Down: {
-			MakeMove(3);
-			break;
-		}
+		else {
+			MakeMove(clientCode);
 		}
     }
 
@@ -116,18 +106,18 @@ namespace Docking::Server {
 
 	void Game::NextTurn()
 	{
-		m_CurrentPlayer = m_CurrentPlayer == 1 ? 2 : 1;
+		m_CurrentPlayer = m_CurrentPlayer == FirstPlayerElement ? SecondPlayerElement : FirstPlayerElement;
 	}
 
-	void Game::MakeMove(int direction)
+	void Game::MakeMove(ClientCode direction)
 	{
 		if (!IsCorrectMove(direction)) return;
-		int enemy = m_CurrentPlayer == 1 ? 2 : 1;
+		int enemy = m_CurrentPlayer == FirstPlayerElement ? SecondPlayerElement : FirstPlayerElement;
 		int ally = m_CurrentPlayer;
 		Position pos = GetPosition();
 		int new_pos_x = pos.x, new_pos_y = pos.y;
 		switch (direction) {
-		case 0: {
+		case ClientCode::Left: {
 			int counter = 0;
 			int copy_pos_x = pos.x;
 			while (copy_pos_x >= 0) {
@@ -149,10 +139,10 @@ namespace Docking::Server {
 			}
 			break;
 		}
-		case 1: {
+		case ClientCode::Right: {
 			int counter = 0;
 			int copy_pos_x = pos.x;
-			while (copy_pos_x <= 7) {
+			while (copy_pos_x <= m_Map.size() - 1) {
 				if (m_Map[copy_pos_x][pos.y]) {
 					counter++;
 				}
@@ -160,7 +150,7 @@ namespace Docking::Server {
 			}
 			copy_pos_x = pos.x;
 			while (counter > 0) {
-				if (copy_pos_x == 8 || m_Map[copy_pos_x][pos.y] == enemy) {
+				if (copy_pos_x == m_Map.size() || m_Map[copy_pos_x][pos.y] == enemy) {
 					counter = 0;
 				}
 				else if (m_Map[copy_pos_x][pos.y] == 0) {
@@ -171,7 +161,7 @@ namespace Docking::Server {
 			}
 			break;
 		}
-		case 2: {
+		case ClientCode::Up: {
 			int counter = 0;
 			int copy_pos_y = pos.y;
 			while (copy_pos_y >= 0) {
@@ -193,10 +183,10 @@ namespace Docking::Server {
 			}
 			break;
 		}
-		case 3: {
+		case ClientCode::Down: {
 			int counter = 0;
 			int copy_pos_y = pos.y;
-			while (copy_pos_y <= 7) {
+			while (copy_pos_y <= m_Map.size() - 1) {
 				if (m_Map[pos.x][copy_pos_y]) {
 					counter++;
 				}
@@ -257,14 +247,14 @@ namespace Docking::Server {
 			return m_Winner;
 		}
 		std::set<std::pair<int, int>>elements;
-		for (size_t i = 0; i < 8; i++) {
-			for (size_t j = 0; j < 8; j++) {
-				if (m_Map[i][j] == 1) {
+		for (size_t i = 0; i < m_Map.size(); i++) {
+			for (size_t j = 0; j < m_Map.size(); j++) {
+				if (m_Map[i][j] == FirstPlayerElement) {
 					elements.insert({ i,j });
-					CheckElements({ int(i), int(j) }, 1, elements);
+					CheckElements({ int(i), int(j) }, FirstPlayerElement, elements);
 					if (elements.size() == 8) {
-						m_Winner = 1;
-						return 1;
+						m_Winner = FirstPlayerElement;
+						return true;
 					}
 					else {
 						elements.clear();
@@ -273,22 +263,22 @@ namespace Docking::Server {
 				}
 			}
 		}
-		for (size_t i = 0; i < 8; i++) {
-			for (size_t j = 0; j < 8; j++) {
-				if (m_Map[i][j] == 2) {
+		for (size_t i = 0; i < m_Map.size(); i++) {
+			for (size_t j = 0; j < m_Map.size(); j++) {
+				if (m_Map[i][j] == SecondPlayerElement) {
 					elements.insert({ i,j });
-					CheckElements({ int(i), int(j) }, 2, elements);
+					CheckElements({ int(i), int(j) }, SecondPlayerElement, elements);
 					if (elements.size() == 8) {
-						m_Winner = 2;
-						return 1;
+						m_Winner = SecondPlayerElement;
+						return true;
 					}
 					else {
-						return 0;
+						return false;
 					}
 				}
 			}
 		}
-		return 0;
+		return false;
 	}
 
 	bool Game::IsActive() const {
@@ -346,7 +336,7 @@ namespace Docking::Server {
 			2 << m_Players[1]->GetName() << m_Players[1]->GetWins();
 		m_NetworkManager.Send(start, m_Players[0]->GetId());
 		m_NetworkManager.Send(start, m_Players[1]->GetId());
-		m_CurrentPlayer = 1;
+		m_CurrentPlayer = FirstPlayerElement;
 	}
 
 	bool Game::CheckClosed(Position pos) {
@@ -370,19 +360,19 @@ namespace Docking::Server {
 		return false;
 	}
 	
-	bool Game::IsCorrectMove(int direction)
+	bool Game::IsCorrectMove(ClientCode direction)
 	{
 		if (m_Position.x != -1) {
-			if (direction == 0 && m_Position.x > 0) {
+			if (direction == ClientCode::Left && m_Position.x > 0) {
 				return true;
 			}
-			if (direction == 1 && m_Position.x < 7) {
+			if (direction == ClientCode::Right && m_Position.x < 7) {
 				return true;
 			}
-			if (direction == 2 && m_Position.y > 0) {
+			if (direction == ClientCode::Up && m_Position.y > 0) {
 				return true;
 			}
-			if (direction == 3 && m_Position.y < 7) {
+			if (direction == ClientCode::Down && m_Position.y < 7) {
 				return true;
 			}
 		}

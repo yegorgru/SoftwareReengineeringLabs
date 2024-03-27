@@ -8,7 +8,6 @@ definition of NetworkManager class
 #pragma once
 
 #include <SFML/Network.hpp>
-#include <iostream>
 
 #include "Singleton.h"
 
@@ -43,6 +42,7 @@ namespace Docking::Client {
         \param packet reference to packet. This packet will be sent to server
         */
         void Send(sf::Packet& packet);
+
     private:
         /**
         \brief NetworkManager constructor

@@ -7,14 +7,10 @@ entry point, unit tests
 
 #include "GameModel.h"
 #include "ClientController.h"
-#include "GameRender.h"
-#include "ClientController.h"
-#include "MenuController.h"
-#include "SignController.h"
-#include "LeadersController.h"
 #include "LeadersRender.h"
 #include "NetworkManager.h"
 #include "Assets.h"
+#include "SignRender.h"
 
 #include <fstream>
 
@@ -41,7 +37,7 @@ std::mt19937 mersenne(rd());
 */
 TEST_CASE("testing game model") {
     using namespace Docking::Client;
-    GameModel& model = GameModel::Get();
+    GameModel model;
 
     model.Restore();
 
@@ -70,7 +66,7 @@ TEST_CASE("testing game model") {
 */
 TEST_CASE("testing leaders render") {
     using namespace Docking::Client;
-    LeadersRender& render = LeadersRender::Get();
+    LeadersRender render;
     render.Restore();
     CHECK(render.GetName() == "");
     render.SetPlayer(Player("name", 5));
@@ -121,7 +117,7 @@ TEST_CASE("testing player") {
    testing sign render
 */
 TEST_CASE("testing sign render") {
-    Docking::Client::SignRender& render = Docking::Client::SignRender::Get();
+    Docking::Client::SignRender render;
     render.SetFocus(false);
     CHECK(render.GetName() == "");
     CHECK(render.GetPassword() == "");
@@ -179,7 +175,6 @@ TEST_CASE("testing sign render") {
 */
 int main(){
     using namespace Docking::Client;
-    sf::RenderWindow window(sf::VideoMode(640, 690), "Docking", sf::Style::Titlebar | sf::Style::Close);
 
     std::ifstream fin("config.txt");
     int port;
@@ -187,23 +182,14 @@ int main(){
     fin.close();
     NetworkManager::Create("localhost", port);
     Assets::Create();
-    ClientController::Create(window);
-    GameModel::Create();
-    GameRender::Create(window);
-    GameController::Create();
-    MenuRender::Create(window);
-    MenuController::Create();
-    SignRender::Create(window);
-    SignController::Create();
-    LeadersRender::Create(window);
-    LeadersController::Create();
+    ClientController clientController;
 
 #ifdef DOCTEST_CONFIG_IMPLEMENT
     doctest::Context context;
     int res = context.run();
 #endif
 
-    Docking::Client::ClientController::Get().Run();
+    clientController.Run();
 
 	return 0;
 }

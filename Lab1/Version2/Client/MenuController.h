@@ -10,17 +10,28 @@ definition of MenuController class
 #include "EnumCode.h"
 #include "NetworkManager.h"
 #include "Controller.h"
-#include "Singleton.h"
 
 namespace Docking::Client{
 
 	/**
 	\brief controller class responsible for menu
 
-	Singleton<MenuController>, Controller inheritant
+	Controller inheritant
 	*/
-	class MenuController:public Controller, public Singleton<MenuController>
+	class MenuController : public Controller
 	{
+	public:
+		/**
+		\brief MenuController constructor
+
+		initiaize attriutes with their Get() methods
+		*/
+		MenuController();
+		MenuController(const MenuController&) = delete;
+		MenuController(MenuController&&) = default;
+		MenuController& operator=(const MenuController&) = delete;
+		MenuController& operator=(MenuController&&) = default;
+
 	public:
 		/**
 		\brief run MenuController method
@@ -29,17 +40,10 @@ namespace Docking::Client{
 		\return Code of controller to launch next or Code::Exit
 		*/
 		Code Run() override;
+
 	private:
-		/**
-		\brief SignController constructor
-
-		initiaize attriutes with their Get() methods
-		*/
-		MenuController();
-		MenuRender& m_Render;				///<responsible for draw of window
+		MenuRender m_Render;				///<responsible for draw of window
 		NetworkManager& m_NetworkManager;	///<responsible for communication with Server side
-
-		friend Singleton<MenuController>;
 	};
 }
 

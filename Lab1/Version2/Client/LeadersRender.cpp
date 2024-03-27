@@ -9,8 +9,7 @@ implementation of LeadersRender class
 #include "Assets.h"
 
 namespace Docking::Client {
-	LeadersRender::LeadersRender(sf::RenderWindow& window) :
-		m_Window(window),
+	LeadersRender::LeadersRender() :
 		m_RectangleName(sf::Vector2f(250, 70)),
 		m_RectangleFind(sf::Vector2f(100, 50))
 	{
@@ -40,25 +39,22 @@ namespace Docking::Client {
 		m_TextLeaders.setFillColor(sf::Color::Black);
 	}
 
-	sf::RenderWindow& LeadersRender::Window()
-	{
-		return m_Window;
-	}
-
 	void LeadersRender::Draw()
 	{
-		m_Window.clear(sf::Color(223, 236, 157));
+		auto& window = Render::GetWindow();
 
-		m_Window.draw(m_RectangleName);
-		m_Window.draw(m_RectangleFind);
+		window.clear(sf::Color(223, 236, 157));
 
-		m_Window.draw(m_TextName);
-		m_Window.draw(m_TextFind);
-		m_Window.draw(m_TextWins);
-		m_Window.draw(m_TextWinsNumber);
-		m_Window.draw(m_TextLeaders);
+		window.draw(m_RectangleName);
+		window.draw(m_RectangleFind);
 
-		m_Window.display();
+		window.draw(m_TextName);
+		window.draw(m_TextFind);
+		window.draw(m_TextWins);
+		window.draw(m_TextWinsNumber);
+		window.draw(m_TextLeaders);
+
+		window.display();
 	}
 
 	void LeadersRender::Restore() {

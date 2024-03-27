@@ -8,31 +8,24 @@ implementation of GameRender class
 #include "GameRender.h"
 #include "Assets.h"
 
-#include <string>
-
 
 namespace Docking::Client {
-	GameRender::GameRender(sf::RenderWindow& window) :
-		m_GameModel(GameModel::Get()),
-		m_Window(window),
+	GameRender::GameRender(GameModel& model) :
+		m_GameModel(model),
 		m_Square(sf::Vector2f(75, 75))
 	{
 		Restore();
 	}
 
-	sf::RenderWindow& GameRender::Window()
-	{
-		return m_Window;
-	}
-
 	void GameRender::Draw()
 	{
-		m_Window.clear(sf::Color(223,236,157));
+		auto& window = Render::GetWindow();
+		window.clear(sf::Color(223, 236, 157));
 		if (m_GameModel.GetPlayers().size() < 2) {
-			m_Window.draw(m_TextWaiting);
+			window.draw(m_TextWaiting);
 		}
 		else if (m_TextEnd.getString().getSize() > 0) {
-			m_Window.draw(m_TextEnd);
+			window.draw(m_TextEnd);
 		}
 		else {
 			const auto& players = m_GameModel.GetPlayers();
@@ -48,7 +41,7 @@ namespace Docking::Client {
 			}
 			playersStr += players[1].GetName();
 			m_TextPlayers.setString(playersStr);
-			m_Window.draw(m_TextPlayers);
+			window.draw(m_TextPlayers);
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++)
 				{
@@ -62,13 +55,13 @@ namespace Docking::Client {
 					}
 
 					if (m_GameModel.GetElement({ i, j })) {
-						m_Window.draw(m_Square);
+						window.draw(m_Square);
 					}
 				}
 			}
 		}
 
-		m_Window.display();
+		window.display();
 	}
 
 	int GameRender::GetElementSize() {

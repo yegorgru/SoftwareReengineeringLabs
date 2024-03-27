@@ -7,12 +7,12 @@ implementation of LeadersController class
 
 #include "LeadersController.h"
 
-#include <SFML/Graphics.hpp>
-
 namespace Docking::Client {
 	LeadersController::LeadersController():
-		m_NetworkManager(NetworkManager::Get()),
-		m_Render(LeadersRender::Get()) {}
+		m_NetworkManager(NetworkManager::Get()) 
+	{
+
+	}
 
 	Code LeadersController::Run()
 	{
@@ -27,9 +27,10 @@ namespace Docking::Client {
 
 		sf::Event event;
 
-		while (m_Render.Window().isOpen()) {
-			sf::Vector2i pos = sf::Mouse::getPosition(m_Render.Window());
-			while (m_Render.Window().pollEvent(event))
+		auto& window = Render::GetWindow();
+		while (window.isOpen()) {
+			sf::Vector2i pos = sf::Mouse::getPosition(window);
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed) {
 					return Code::Exit;
@@ -93,5 +94,10 @@ namespace Docking::Client {
 			m_Render.Draw();
 		}
 		return Code::Exit;
+	}
+
+	void LeadersController::SetPlayer(const Player& player) {
+		m_Render.Restore();
+		m_Render.SetPlayer(player);
 	}
 }

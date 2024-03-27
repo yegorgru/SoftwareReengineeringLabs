@@ -11,8 +11,7 @@ implementation of GameController class
 
 namespace Docking::Client {
 	GameController::GameController() :
-		m_Model(GameModel::Get()),
-		m_Render(GameRender::Get()),
+		m_Render(m_Model),
 		m_NetworkManager(NetworkManager::Get())
 	{
 		Restore();
@@ -20,18 +19,21 @@ namespace Docking::Client {
 
 	Code GameController::Run()
 	{
+		m_Model.Restore();
+		m_Render.Restore();
 		sf::Event event;
 
 		sf::Packet game;
 		game << static_cast<int>(ClientCode::Game);
 		m_NetworkManager.Send(game);
 
-		while (m_Render.Window().isOpen())
+		auto& window = Render::GetWindow();
+		while (window.isOpen())
 		{
-			sf::Vector2i pos = sf::Mouse::getPosition(m_Render.Window());
+			sf::Vector2i pos = sf::Mouse::getPosition(window);
 			int x = pos.x / m_Render.GetElementSize();
 			int y = (pos.y-50) / m_Render.GetElementSize();
-			while (m_Render.Window().pollEvent(event))
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed) {
 					return Code::Exit;
@@ -92,7 +94,6 @@ namespace Docking::Client {
 						m_Model.AddPlayer(Player(name, wins));
 					}
 					m_Model.Restore();
-					std::cout << "Server started game" << std::endl;
 					break;
 				}
 				case ServerCode::EndGame: {

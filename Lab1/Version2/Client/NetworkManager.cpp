@@ -6,6 +6,7 @@ implementation of NetworkManager class
 */
 
 #include "NetworkManager.h"
+#include <iostream>
 
 namespace Docking::Client {
     NetworkManager::NetworkManager(const sf::IpAddress& ip, unsigned port) {

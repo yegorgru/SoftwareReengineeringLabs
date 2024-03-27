@@ -5,45 +5,40 @@
 implementation of ClientController class
 */
 
-#include <SFML/Network.hpp>
-
 #include "ClientController.h"
-#include "MenuController.h"
-#include "EnumCode.h"
 #include "SignController.h"
 #include "LeadersController.h"
-#include "LeadersRender.h"
+#include "GameController.h"
+#include "MenuController.h"
 
 namespace Docking::Client {
-	ClientController::ClientController(sf::RenderWindow& window):
-		m_Window(window) {}
-
 	void ClientController::Run() {
-		Code code = SignController::Get().Run(m_Player);
+		GameController gameController;
+		LeadersController leadersController;
+		MenuController menuController;
+		SignController signController;
+		Code code = signController.Run(m_Player);
 		while (true) {
 			switch (code) {
 			case Code::Exit: {
 				sf::Packet closed;
 				closed << static_cast<int>(ClientCode::ClosedWindow);
 				NetworkManager::Get().Send(closed);
-				m_Window.close();
+				Render::GetWindow().close();
 				return;
 			}
 			case Code::Menu: {
-				code = MenuController::Get().Run();
+				code = menuController.Run();
 				break;
 			}
 			case Code::PlayGame: {
-				GameController::Get().Restore();
-				GameModel::Get().Restore();
-				GameRender::Get().Restore();
-				code = GameController::Get().Run();
+				gameController.Restore();
+				code = gameController.Run();
 				break;
 			}
 			case Code::Leaders: {
-				LeadersRender::Get().Restore();
-				LeadersRender::Get().SetPlayer(m_Player);
-				code = LeadersController::Get().Run();
+				leadersController.SetPlayer(m_Player);
+				code = leadersController.Run();
 				break;
 			}
 			}

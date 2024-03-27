@@ -7,12 +7,11 @@ implementation of SignController class
 
 #include "SignController.h"
 
-#include <SFML/Graphics.hpp>
-
 namespace Docking::Client {
 	SignController::SignController() :
-		m_Render(SignRender::Get()),
-		m_NetworkManager(NetworkManager::Get()) {}
+		m_NetworkManager(NetworkManager::Get()) 
+	{
+	}
 
 	Code SignController::Run()
 	{
@@ -23,9 +22,10 @@ namespace Docking::Client {
 	{
 		sf::Event event;
 
-		while (m_Render.Window().isOpen()) {
-			sf::Vector2i pos = sf::Mouse::getPosition(m_Render.Window());
-			while (m_Render.Window().pollEvent(event))
+		auto& window = Render::GetWindow();
+		while (window.isOpen()) {
+			sf::Vector2i pos = sf::Mouse::getPosition(window);
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed) {
 					return Code::Exit;

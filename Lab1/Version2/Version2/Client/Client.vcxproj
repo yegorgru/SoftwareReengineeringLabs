@@ -31,6 +31,7 @@
     <ClCompile Include="..\..\Client\MenuRender.cpp" />
     <ClCompile Include="..\..\Client\NetworkManager.cpp" />
     <ClCompile Include="..\..\Client\Player.cpp" />
+    <ClCompile Include="..\..\Client\Render.cpp" />
     <ClCompile Include="..\..\Client\SignController.cpp" />
     <ClCompile Include="..\..\Client\SignRender.cpp" />
   </ItemGroup>

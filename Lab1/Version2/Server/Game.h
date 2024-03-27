@@ -36,6 +36,7 @@ namespace Docking::Server {
             int y;
         };
 
+    public:
         /**
         \brief default constructor of game
 
@@ -43,12 +44,17 @@ namespace Docking::Server {
         m_CurrentPlayer equal 0, m_Winner equal 0, m_Position equal {-1,-1}
         */
         Game();
+        Game(const Game&) = delete;
+        Game(Game&&) = default;
+        Game& operator=(const Game&) = delete;
+        Game& operator=(Game&&) = default;
 
         /**
         \brief default game destructor
         */
         virtual ~Game() = default;
 
+    public:
         /**
         \brief connects player
 
@@ -136,7 +142,7 @@ namespace Docking::Server {
         \throw std::invalid_argument("Incorrect move code") in case of incorrect client code
         \param direction left - 0, right - 1, top - 2, down - 3
         */
-        void MakeMove(int direction);
+        void MakeMove(ClientCode direction);
 
         /**
         \brief checks if one of players connected his blocks
@@ -213,18 +219,23 @@ namespace Docking::Server {
         \param direction left - 0, right - 1, top - 2, down - 3
         \return bool true if it's correct move
         */
-        bool IsCorrectMove(int direction);
+        bool IsCorrectMove(ClientCode direction);
 
-        std::vector<Player*> m_Players;             ///<pointers to connected players
+    private:
+        using Players = std::vector<Player*>;
+        using GameMap = std::array<std::array<int, 8>, 8>;
+        using Dict = std::unordered_map<int, int>;
+    private:
+        Players m_Players;                          ///<pointers to connected players
         int m_CurrentPlayer;                        ///<current player's element, game starts with 1
         int m_Winner;                               ///<winner's element
 
-        std::array<std::array<int, 8>, 8> m_Map;    ///<map that contains elements
+        GameMap m_Map;                              ///<map that contains elements
         Position m_Position;                        ///<position that current player clicked last
 
         NetworkManager<int>& m_NetworkManager;      ///<responsible for receiving and sending packets
 
-        std::unordered_map<int, int>m_IdElement;    ///<contact between id and element
-        std::unordered_map<int, int>m_ElementId;    ///<contact between element and id
+        Dict m_IdElement;                           ///<contact between id and element
+        Dict m_ElementId;                              ///<contact between element and id
     };
 }

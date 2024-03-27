@@ -6,10 +6,8 @@ definition of Player class
 */
 
 #pragma once
-
-#include <list>
-
 #include <SFML/Network.hpp>
+#include <string>
 
 namespace Docking::Server {
 
@@ -25,6 +23,10 @@ namespace Docking::Server {
         \param socket reference to tcp socket, m_Socket will be equal to it
         */
         Player(int id, sf::TcpSocket& socket);
+        Player(const Player&) = default;
+        Player(Player&&) = default;
+        Player& operator=(const Player&) = default;
+        Player& operator=(Player&&) = default;
 
         /**
         \brief default destructor
